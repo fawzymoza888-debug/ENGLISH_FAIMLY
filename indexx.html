@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html dir="ltr">
+
+<head>
+    <title>حجز رحلة جديدة</title>
+    <link rel="stylesheet" type="text/css" href="stayle.css">
+</head>
+
+<body>
+    <nav>
+    <li ><a href="index.html"  >home</a> </li>
+
+</nav>
+
+    <div class="card">
+        <h2>استمارة حجز رحلة جديدة</h2>
+
+
+        <form action="save.php" method="get">
+
+            <label>اسم المسافر بالكامل:</label><br>
+            <input type="text" id="fullname" name="fullname" placeholder="أدخل اسمك" required><br><br>
+
+            <label>كلمة المرور:</label><br>
+            <input type="password" name="pass" required><br><br>
+
+
+            <label>تاريخ السفر (Date):</label><br>
+            <input type="date" id="travelDate" name="travelDate"><br><br>
+
+            <label>عدد التذاكر (Number):</label><br>
+            <input type="number" id="tickets" min="1" max="10" value="1"><br><br>
+
+            <label>لون الغلاف المفضل (Color):</label><br>
+            <input type="color" name="favColor"><br><br>
+
+
+            <label>اختر المدينة:</label><br>
+            <select id="destination" name="destination">
+                <option value="sharm">شرم الشيخ (3000 ج.م)</option>
+                <option value="luxor">الأقصر وأسوان (5000 ج.م)</option>
+            </select><br><br>
+
+
+            <label>نوع الإقامة:</label><br>
+            <input type="radio" name="hotel" value="5stars"> 5 نجوم
+            <input type="radio" name="hotel" value="4stars"> 4 نجوم <br><br>
+
+
+            <input type="checkbox" id="agree"> أوافق على كافة الشروط والأحكام<br><br>
+
+            <label>ملاحظات إضافية:</label><br>
+            <textarea rows="3" cols="30"></textarea><br><br>
+
+            <input type="submit" value="تأكيد الحجز النهائي">
+            <input type="button" value="احسب التكلفة التقديرية" onclick="calculateCost()">
+        </form>
+
+
+        <h3 id="result-text"></h3>
+
+        <br>
+
+        <a href="index.html"><b>العودة للصفحة الرئيسية</b></a>
+    </div>
+
+
+    <script src="script.js"></script>
+</body>
+
+</html>

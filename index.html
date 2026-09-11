@@ -1,60 +1,704 @@
 <!DOCTYPE html>
-<html dir="ltr">
-
+<html lang="ar" dir="rtl">
 <head>
-    <title>الموقع الرئيسي للرحلات</title>
-    <link rel="stylesheet" type="text/css" href="stayle.css">
-</head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اختبار البرمجة المتوازية - Ch1 & Ch2 (80 سؤال)</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --success: #2ecc71;
+            --danger: #e74c3c;
+            --bg: #f4f7f6;
+            --card-bg: #ffffff;
+            --text: #333333;
+        }
 
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            direction: rtl;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 25px;
+        }
+
+        .score-board {
+            position: sticky;
+            top: 10px;
+            background: var(--primary);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+
+        .score-board div {
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+
+        .question-card {
+            background: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .question-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 15px;
+            direction: ltr;
+            text-align: left;
+        }
+
+        .question-title span.q-num {
+            color: var(--secondary);
+            margin-right: 5px;
+        }
+
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            direction: ltr;
+        }
+
+        .option-btn {
+            background-color: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 6px;
+            padding: 12px 15px;
+            text-align: left;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .option-btn:hover:not([disabled]) {
+            background-color: #e3f2fd;
+            border-color: var(--secondary);
+        }
+
+        .option-btn.correct {
+            background-color: #d4edda !important;
+            border-color: var(--success) !important;
+            color: #155724 !important;
+            font-weight: bold;
+        }
+
+        .option-btn.incorrect {
+            background-color: #f8d7da !important;
+            border-color: var(--danger) !important;
+            color: #721c24 !important;
+        }
+
+        .feedback {
+            margin-top: 12px;
+            font-weight: bold;
+            font-size: 0.95rem;
+            direction: ltr;
+            text-align: left;
+        }
+
+        .controls {
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .btn-reset {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .btn-reset:hover {
+            background: #2980b9;
+        }
+
+        @media (max-width: 600px) {
+            .container { padding: 15px; }
+            .score-board { flex-direction: column; gap: 8px; text-align: center; }
+        }
+    </style>
+</head>
 <body>
 
+<div class="container">
+    <h1>بنك أسئلة البرمجة المتوازية</h1>
+    <div class="subtitle">Ch1: Introduction & Ch2: Concepts and Terminology (80 MCQ)</div>
 
-    <div class="card">
-        <h1 id="main-header">موقع رحلات مصر البحرية والترفيهية</h1>
-        <p>أهلاً بك في موقعنا، اختر وجهتك وسجل معنا بكل سهولة.</p>
-
-
-        <a href="E:\Project_web\indexx.html" target="_self"><b>اضغط هنا للانتقال لصفحة حجز رحلة جديدة</b></a>
+    <div class="score-board">
+        <div>النتيجة: <span id="score">0</span> / 80</div>
+        <div>الأسئلة المُجابة: <span id="answered">0</span> / 80</div>
     </div>
 
+    <div id="quiz-container"></div>
 
-    <div class="card">
-        <h2 id="edit">شعار الموقع</h2>
-        <img src="https://media.istockphoto.com/id/687868080/photo/beautiful-sandy-beach-with-palm-trees-at-sunset-egypt.jpg?s=1024x1024&w=is&k=20&c=UKfxki1OQniLMo8xvUpzMJAxvXPMeHC6V4b6G6AiZ7w=" alt="رحلات مصر" width="250" height="150" title="مصر">
+    <div class="controls">
+        <button class="btn-reset" onclick="resetQuiz()">إعادة الاختبار 🔄</button>
     </div>
+</div>
 
+<script>
+const quizData = [
+    // --- CH1: Introduction to Parallel Computing (1 - 40) ---
+    {
+        q: "1. Software has traditionally been written for ________ computing, where instructions are executed sequentially.",
+        options: ["Parallel", "Serial", "Distributed", "Concurrent"],
+        correct: 1
+    },
+    {
+        q: "2. In serial computing, instructions are executed on:",
+        options: ["Multiple processors simultaneously", "A single processor one by one", "Multiple cores concurrently", "Networked computing nodes"],
+        correct: 1
+    },
+    {
+        q: "3. What is Parallel Computing?",
+        options: [
+            "Sequential execution of tasks on one CPU",
+            "Simultaneous use of multiple compute resources to solve a problem",
+            "Executing code only via high-speed internet clusters",
+            "Storing data on external drives for fast retrieval"
+        ],
+        correct: 1
+    },
+    {
+        q: "4. Which form of parallelism operates by increasing the processor word size (e.g., 8-bit to 16-bit)?",
+        options: ["Instruction-level parallelism", "Task parallelism", "Bit-level parallelism", "Data-level parallelism"],
+        correct: 2
+    },
+    {
+        q: "5. Instruction-level parallelism (ILP) involves:",
+        options: [
+            "Re-ordering and grouping instructions to execute concurrently",
+            "Dividing data into blocks across memory nodes",
+            "Running multiple separate application software packages",
+            "Increasing clock speed of a single pipeline"
+        ],
+        correct: 0
+    },
+    {
+        q: "6. Task parallelism focuses on:",
+        options: [
+            "Executing the same instruction stream on different data",
+            "Decomposing a problem into subtasks allocated to different processors",
+            "Increasing the instruction bus width",
+            "Combining physical RAM across multiple motherboards"
+        ],
+        correct: 1
+    },
+    {
+        q: "7. Data-level parallelism (DLP) is characterized by:",
+        options: [
+            "Instructions from a single stream operating concurrently on several data items",
+            "Executing different code parts on identical data",
+            "Parallelizing the operating system kernel routines",
+            "Increasing disk read/write bandwidth"
+        ],
+        correct: 0
+    },
+    {
+        q: "8. A major advantage of parallel computing over serial computing is that it:",
+        options: [
+            "Eliminates the need for memory synchronization",
+            "Saves time and makes effective use of multi-core hardware resources",
+            "Guarantees automatic parallelization of legacy C code",
+            "Reduces the physical energy consumed per clock cycle to zero"
+        ],
+        correct: 1
+    },
+    {
+        q: "9. Which of the following is NOT a typical application of parallel computing?",
+        options: ["Real-time simulation", "Advanced computer graphics", "Scientific modeling", "Basic single-user text editing"],
+        correct: 3
+    },
+    {
+        q: "10. Parallel programs require high cohesion and low:",
+        options: ["Performance", "Coupling", "Speedup", "Concurrency"],
+        correct: 1
+    },
+    {
+        q: "11. In a Shared Memory Model, all processors have access to:",
+        options: ["A pool of common physical memory", "Only their isolated private RAM", "Remote disks via HTTP calls", "Exclusive un-sharable registries"],
+        correct: 0
+    },
+    {
+        q: "12. In a Distributed Memory Model, communication between processors is achieved via:",
+        options: ["Shared physical registers", "Network message passing", "Global bus locking", "Direct cache accesses"],
+        correct: 1
+    },
+    {
+        q: "13. A hybrid Distributed/Shared Memory model combines both models by organizing processors into:",
+        options: ["Clusters of isolated single-bit registers", "Nodes that share memory internally but communicate over a network", "Pure serial mainframes", "Non-networked vector pipelines"],
+        correct: 1
+    },
+    {
+        q: "14. OpenMP is a compiler-side API based on which memory model?",
+        options: ["Distributed memory model", "Shared memory model", "Message Passing model", "Non-coherent memory model"],
+        correct: 1
+    },
+    {
+        q: "15. MPI stands for:",
+        options: ["Multi-Processor Interface", "Message Passing Interface", "Memory Programming Integration", "Massive Parallel Interconnect"],
+        correct: 1
+    },
+    {
+        q: "16. OpenMP relies primarily on compiler:",
+        options: ["Directives", "Sockets", "Assemblers", "Routers"],
+        correct: 0
+    },
+    {
+        q: "17. A process can be defined as:",
+        options: ["The smallest sequence of instructions managed by a scheduler", "An instance of a computer program being executed containing code and activity", "A physical hardware socket on a motherboard", "An optical network transmission protocol"],
+        correct: 1
+    },
+    {
+        q: "18. A thread is:",
+        options: ["An independent physical node in a supercomputer", "The smallest sequence of programmed instructions managed by OS scheduler", "A hard drive storage sector", "A high-level network topology"],
+        correct: 1
+    },
+    {
+        q: "19. Which statement is TRUE regarding MPI?",
+        options: ["It is limited strictly to a single multi-core CPU node", "It is a standard library used primarily for distributed memory systems", "It does not allow manual control of data transfer", "It replaces the need for a C or Fortran compiler"],
+        correct: 1
+    },
+    {
+        q: "20. Cloud computing services are delivered over the Internet typically under service categories like:",
+        options: ["IaaS, PaaS, SaaS", "SISD, SIMD, MIMD", "UMA, NUMA, COMA", "CPU, GPU, ALU"],
+        correct: 0
+    },
+    {
+        q: "21. Parallel Processing concerns hardware cores/CPUs running in parallel, while Parallel Computing concerns:",
+        options: ["Purchasing new power supplies", "Software behavior to optimize for parallel conditions", "Replacing operating system kernels", "Soldering integrated circuits"],
+        correct: 1
+    },
+    {
+        q: "22. Measuring performance in sequential programming typically involves identifying:",
+        options: ["Network latency between nodes", "System bottlenecks", "Cache coherency traffic", "Message passing tags"],
+        correct: 1
+    },
+    {
+        q: "23. Real-world physical events are inherently dynamic and concurrent, making them suitable for:",
+        options: ["Serial processing only", "Parallel simulation and modeling", "Fixed program calculators", "Single-threaded execution"],
+        correct: 1
+    },
+    {
+        q: "24. OpenMP code target architectures are typically programmed in languages like:",
+        options: ["HTML / CSS", "C, C++, and Fortran", "SQL and PHP", "Assembly only"],
+        correct: 1
+    },
+    {
+        q: "25. Which layer sits directly above the OpenMP Runtime library in the OpenMP solution stack?",
+        options: ["Hardware (HW)", "Directives, Compiler, OpenMP library", "Operating System", "End User"],
+        correct: 1
+    },
+    {
+        q: "26. In OpenMP, memory is shared, meaning data can be passed between tasks efficiently without:",
+        options: ["Compiler support", "Redundant data copies", "Thread creation", "CPU cycles"],
+        correct: 1
+    },
+    {
+        q: "27. Compared to OpenMP, MPI is generally considered:",
+        options: ["Easier to learn with simpler scoping", "More complex/less accessible, but highly flexible and scalable across nodes", "Limited to single-socket desktop computers", "Incapable of running on C++ applications"],
+        correct: 1
+    },
+    {
+        q: "28. Parallel computing achieves faster problem solving primarily by increasing:",
+        options: ["The speed of light", "Available computational throughput via simultaneous resources", "Disk capacity", "Monitor refresh rates"],
+        correct: 1
+    },
+    {
+        q: "29. In serial computation, if a problem is broken down into discrete instructions, how many instructions run at any moment?",
+        options: ["Exactly 1", "Equal to the number of RAM channels", "Variable depending on network speed", "Multiple"],
+        correct: 0
+    },
+    {
+        q: "30. Parallel computers can often be constructed cost-effectively using:",
+        options: ["Commodity, off-the-shelf components", "Exotic liquid-helium single-core chips only", "Fixed-function calculators", "Un-programmable mainframes"],
+        correct: 0
+    },
+    {
+        q: "31. A critical challenge in parallel programming is coordinating and synchronizing:",
+        options: ["Monitor resolution", "Communication between multiple sub-tasks", "Keyboard typing rates", "Power supply frequencies"],
+        correct: 1
+    },
+    {
+        q: "32. Concurrent execution of instructions on multi-core processors helps eliminate:",
+        options: ["Hardware resource waste caused by idle cores", "The need for operating systems", "Data structures entirely", "Program source code"],
+        correct: 0
+    },
+    {
+        q: "33. What connects compute nodes in a distributed parallel system?",
+        options: ["System Bus only", "High-speed Networks", "Instruction Registers", "Accumulators"],
+        correct: 1
+    },
+    {
+        q: "34. In OpenMP, parallel code sections can be defined using simple scoping and:",
+        options: ["MPI tags", "Compiler directives", "Hardware jumpers", "Explicit network sockets"],
+        correct: 1
+    },
+    {
+        q: "35. A serial process runs entirely on:",
+        options: ["Multiple network nodes", "One core of one processor", "Distributed GPUs", "A vector pipeline"],
+        correct: 1
+    },
+    {
+        q: "36. Cloud computing facilitates broader access to parallel computing power via:",
+        options: ["Virtual computer clusters", "Local serial mainframes", "Physical vacuum tubes", "Analog storage tapes"],
+        correct: 0
+    },
+    {
+        q: "37. Sequential computing is effectively the opposite of:",
+        options: ["Serial execution", "Parallel computing", "Single-threaded operations", "Deterministic execution"],
+        correct: 1
+    },
+    {
+        q: "38. Building parallel software requires managing data structures that are:",
+        options: ["Sequential only", "Concurrent", "Static and fixed at compile time", "Unstored"],
+        correct: 1
+    },
+    {
+        q: "39. Software tool examples designed for shared memory parallel programming include:",
+        options: ["MPI", "OpenMP", "HTTP", "FTP"],
+        correct: 1
+    },
+    {
+        q: "40. Parallel processing reduces processing time by breaking up a complex task and running subparts:",
+        options: ["One after another sequentially", "Simultaneously on multiple CPUs/cores", "On a single-core fixed computer", "Exclusively during system boot time"],
+        correct: 1
+    },
 
-    <div class="card">
-        <h2>جدول الرحلات المتاحة</h2>
-        <table border="1">
-            <tr>
-                <th colspan="2">المدينة والوجهة</th>
-                <th>عدد الأيام</th>
-                <th>السعر (ج.م)</th>
-            </tr>
-            <tr>
-                <td>شرم الشيخ</td>
-                <td>دهب</td>
-                <td>5 أيام</td>
-                <td>3000</td>
-            </tr>
-            <tr>
-                <td colspan="2">الأقصر وأسوان</td>
-                <td>7 أيام</td>
-                <td>5000</td>
-            </tr>
-        </table>
-    </div>
+    // --- CH2: Concepts and Terminology (41 - 80) ---
+    {
+        q: "41. Modern general-purpose computers are based on the stored-program concept introduced by:",
+        options: ["Gene Amdahl", "John von Neumann", "Michael Flynn", "Gordon Moore"],
+        correct: 1
+    },
+    {
+        q: "42. In the Von Neumann architecture, both instructions and data are stored in:",
+        options: ["Separate non-communicating registers", "The Main Memory Unit", "The Arithmetic Logic Unit", "Output devices only"],
+        correct: 1
+    },
+    {
+        q: "43. Which component of the CPU handles operations such as addition, logical comparisons, and bit shifts?",
+        options: ["Control Unit (CU)", "Arithmetic Logic Unit (ALU)", "Program Counter (PC)", "Memory Address Register (MAR)"],
+        correct: 1
+    },
+    {
+        q: "44. The register that holds the memory address of the next instruction to be fetched is the:",
+        options: ["Accumulator (ACC)", "Program Counter (PC)", "Current Instruction Register (CIR)", "Instruction Buffer Register (IBR)"],
+        correct: 1
+    },
+    {
+        q: "45. The 'Von Neumann bottleneck' refers to the limitation caused by:",
+        options: ["Having too many processing cores", "Sequential instruction fetching and execution speed limitation through the memory bus", "Unlimited network bandwidth", "Parallel thread creation overhead"],
+        correct: 1
+    },
+    {
+        q: "46. Which bus carries memory addresses from the processor to memory?",
+        options: ["Data Bus", "Address Bus", "Control Bus", "PCI Bus"],
+        correct: 1
+    },
+    {
+        q: "47. Flynn's Taxonomy classifies computer architectures along which two independent dimensions?",
+        options: ["Clock Speed & Memory Size", "Instruction Stream & Data Stream", "Network Bandwidth & Latency", "Tasks & Threads"],
+        correct: 1
+    },
+    {
+        q: "48. A conventional single-processor uniprocessor computer belongs to which Flynn classification?",
+        options: ["SISD", "SIMD", "MISD", "MIMD"],
+        correct: 0
+    },
+    {
+        q: "49. Cray vector processors and modern GPUs with vector execution units typically fall under:",
+        options: ["SISD", "SIMD", "MISD", "MIMD"],
+        correct: 1
+    },
+    {
+        q: "50. Which Flynn classification executes multiple different instruction streams on a single data stream (rare commercially)?",
+        options: ["SISD", "SIMD", "MISD", "MIMD"],
+        correct: 2
+    },
+    {
+        q: "51. Most modern multi-core supercomputers and parallel clusters fall into which Flynn category?",
+        options: ["SISD", "SIMD", "MISD", "MIMD"],
+        correct: 3
+    },
+    {
+        q: "52. In SIMD systems, execution across processing units is typically:",
+        options: ["Asynchronous and non-deterministic", "Synchronous (lockstep)", "Distributed over internet nodes only", "Sequential"],
+        correct: 1
+    },
+    {
+        q: "53. Shared-memory MIMD systems are also commonly known as:",
+        options: ["Loosely coupled multiprocessor systems", "Tightly coupled multiprocessor systems", "Distributed cluster nodes", "Massively parallel NORMA systems"],
+        correct: 1
+    },
+    {
+        q: "54. Distributed-memory MIMD systems communicate using:",
+        options: ["Shared global RAM addresses", "Interconnection networks (IPC)", "Instruction Buffer Registers", "Single bus control lines"],
+        correct: 1
+    },
+    {
+        q: "55. A standalone 'computer in a box' comprising processors, memory, and network interfaces in a cluster is called a:",
+        options: ["Task", "Node", "Socket", "Pipeline"],
+        correct: 1
+    },
+    {
+        q: "56. Breaking a task into sequential steps performed by different processing units like an assembly line is called:",
+        options: ["Pipelining", "Shared Memory", "Granularity", "Scaling"],
+        correct: 0
+    },
+    {
+        q: "57. Symmetric Multi-Processor (SMP) architecture is characterized by:",
+        options: ["All processors sharing a single address space with equal access to resources", "Non-shared isolated nodes with no bus access", "Single-instruction execution units", "Diskless processing cores"],
+        correct: 0
+    },
+    {
+        q: "58. What is 'Synchronization' in parallel computing?",
+        options: ["Coordination of parallel tasks in real-time", "Converting C code into Fortran automatically", "Increasing hardware clock rate", "Reducing RAM size"],
+        correct: 0
+    },
+    {
+        q: "59. Granularity in parallel computing measures the ratio of:",
+        options: ["Memory size to disk speed", "Computation to communication", "Clock speed to core count", "Serial code to parallel code"],
+        correct: 1
+    },
+    {
+        q: "60. Fine-grained parallelism means:",
+        options: ["Relatively large computation between communications", "Relatively small computation between communication events", "Zero communication between tasks", "Execution on GPUs only"],
+        correct: 1
+    },
+    {
+        q: "61. Observed Speedup is defined mathematically as:",
+        options: [
+            "Serial Wall-Clock Time / Parallel Wall-Clock Time",
+            "Parallel Wall-Clock Time / Serial Wall-Clock Time",
+            "Total Cores * Clock Speed",
+            "Number of Processors / Serial Fraction"
+        ],
+        correct: 0
+    },
+    {
+        q: "62. Time required for task startup, synchronization, and communication in parallel execution is known as:",
+        options: ["Observed Speedup", "Parallel Overhead", "Granularity", "Scalability"],
+        correct: 1
+    },
+    {
+        q: "63. A parallel workload requiring little to no effort to separate into parallel tasks with no inter-task dependencies is called:",
+        options: ["Embarrassingly (Ideally) Parallel", "Pipelined Parallel", "Tightly Coupled Parallel", "Cache Coherent"],
+        correct: 0
+    },
+    {
+        q: "64. Amdahl's Law states that potential speedup is limited by the:",
+        options: ["Parallel fraction of the program", "Serial fraction of the program (1 - P)", "Network bandwidth exclusively", "Number of RAM chips"],
+        correct: 1
+    },
+    {
+        q: "65. According to Amdahl's Law, if 50% of a code can be parallelized (P = 0.5), the maximum theoretical speedup is:",
+        options: ["1x", "2x", "5x", "Infinite"],
+        correct: 1
+    },
+    {
+        q: "66. Amdahl's Law formula for speedup given parallel fraction P and N processors is:",
+        options: ["1 / ((1 - P) + (P / N))", "(1 - P) / N", "P * N", "N / (1 - P)"],
+        correct: 0
+    },
+    {
+        q: "67. Strong Scaling (Amdahl) assumes that:",
+        options: ["Problem size increases with processor count", "Total problem size remains fixed as processors are added", "Communication overhead drops to zero", "Memory decreases exponentially"],
+        correct: 1
+    },
+    {
+        q: "68. Weak Scaling (Gustafson) assumes that:",
+        options: ["Problem size per processor stays fixed as processors are added", "Total problem size stays fixed", "Processors run at lower clock rates", "Serial code becomes zero"],
+        correct: 0
+    },
+    {
+        q: "69. In general, compared to serial applications, parallel applications have higher complexity in:",
+        options: ["Design, coding, debugging, tuning, and maintenance", "Font rendering and GUI theme choices", "Physical power cord length", "Monolithic compiler installations"],
+        correct: 0
+    },
+    {
+        q: "70. What component inside a modern CPU serves as a distinct execution unit with its own instruction stream?",
+        options: ["Socket", "Core", "Node", "Bus"],
+        correct: 1
+    },
+    {
+        q: "71. Massively Parallel Processing (MPP) systems typically feature:",
+        options: ["Hundreds or thousands of processing nodes working in parallel", "A single execution thread running on a single register", "Shared physical accumulators across all nodes", "Un-networked standalone PCs"],
+        correct: 0
+    },
+    {
+        q: "72. What limits the theoretical maximum speedup in Amdahl's Law even if infinite processors are added?",
+        options: ["The number of network switches", "The strictly sequential (serial) portion of the code", "The disk capacity", "The GPU thread count"],
+        correct: 1
+    },
+    {
+        q: "73. Scalability refers to a system's ability to demonstrate proportionate increase in speedup when:",
+        options: ["More resources (processors/memory) are added", "Clock frequency is halved", "Software is executed sequentially", "Communications are disabled"],
+        correct: 0
+    },
+    {
+        q: "74. The register that stores the results of arithmetic and logical operations performed by the ALU is the:",
+        options: ["Program Counter", "Accumulator", "Memory Address Register", "Current Instruction Register"],
+        correct: 1
+    },
+    {
+        q: "75. In Flynn's Taxonomy, the state of Instruction and Data streams can be either:",
+        options: ["Single or Multiple", "Shared or Distributed", "Synchronous or Asynchronous", "Static or Dynamic"],
+        correct: 0
+    },
+    {
+        q: "76. A shared memory system where cache modifications by one CPU are automatically made visible to other CPUs is called:",
+        options: ["Cache Coherent (CC-UMA / CC-NUMA)", "Distributed NORMA", "Embarrassingly Parallel", "Non-cacheable"],
+        correct: 0
+    },
+    {
+        q: "77. Which register holds the instruction currently being executed or decoded?",
+        options: ["MAR", "MDR", "CIR (Current Instruction Register)", "PC"],
+        correct: 2
+    },
+    {
+        q: "78. In a distributed memory architecture, data residing on a remote node takes:",
+        options: ["Equal time to access as local data", "Longer to access than local node data", "Zero latency to access", "Less time than cache access"],
+        correct: 1
+    },
+    {
+        q: "79. Increasing the problem size in 2D grid calculations can increase the parallel fraction of execution time, making the application:",
+        options: ["Less scalable", "More scalable", "Non-parallelizable", "Serial-bound"],
+        correct: 1
+    },
+    {
+        q: "80. Parallel overhead includes all of the following EXCEPT:",
+        options: ["Task creation and termination time", "Inter-task data communication", "Useful computation work", "Synchronization waiting time"],
+        correct: 2
+    }
+];
 
+let userAnswers = new Array(quizData.length).fill(null);
+let score = 0;
 
-    <div class="card">
-        <h2>اختبار التفاعل مع الموقع</h2>
-        <h3 id="info-text">اضغط على الزر لمعرفة خصومات اليوم</h3>
-        <button onclick="showOffer()">عرض الخصم</button>
-    </div>
-<script type="alert">alert("h");</script>
+function renderQuiz() {
+    const container = document.getElementById('quiz-container');
+    container.innerHTML = '';
 
-    <script src="script.js"></script>
+    quizData.forEach((item, index) => {
+        const card = document.createElement('div');
+        card.className = 'question-card';
+        card.id = `q-card-${index}`;
+
+        const title = document.createElement('div');
+        title.className = 'question-title';
+        title.innerHTML = `<span class="q-num">Q${index + 1}.</span> ${item.q.replace(/^\d+\.\s*/, '')}`;
+        card.appendChild(title);
+
+        const optionsDiv = document.createElement('div');
+        optionsDiv.className = 'options-container';
+
+        item.options.forEach((opt, optIndex) => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerText = `${String.fromCharCode(65 + optIndex)}) ${opt}`;
+            btn.onclick = () => selectAnswer(index, optIndex);
+
+            if (userAnswers[index] !== null) {
+                btn.disabled = true;
+                if (optIndex === item.correct) {
+                    btn.classList.add('correct');
+                }
+                if (userAnswers[index] === optIndex && optIndex !== item.correct) {
+                    btn.classList.add('incorrect');
+                }
+            }
+
+            optionsDiv.appendChild(btn);
+        });
+
+        card.appendChild(optionsDiv);
+
+        if (userAnswers[index] !== null) {
+            const feedback = document.createElement('div');
+            feedback.className = 'feedback';
+            if (userAnswers[index] === item.correct) {
+                feedback.style.color = 'var(--success)';
+                feedback.innerText = '✓ الإجابة صحيحة!';
+            } else {
+                feedback.style.color = 'var(--danger)';
+                feedback.innerText = `✗ إجابة خاطئة. الإجابة الصحيحة هي: ${String.fromCharCode(65 + item.correct)}) ${item.options[item.correct]}`;
+            }
+            card.appendChild(feedback);
+        }
+
+        container.appendChild(card);
+    });
+
+    updateScoreBoard();
+}
+
+function selectAnswer(qIndex, optIndex) {
+    if (userAnswers[qIndex] !== null) return;
+
+    userAnswers[qIndex] = optIndex;
+    if (optIndex === quizData[qIndex].correct) {
+        score++;
+    }
+
+    renderQuiz();
+}
+
+function updateScoreBoard() {
+    document.getElementById('score').innerText = score;
+    const answeredCount = userAnswers.filter(a => a !== null).length;
+    document.getElementById('answered').innerText = answeredCount;
+}
+
+function resetQuiz() {
+    userAnswers = new Array(quizData.length).fill(null);
+    score = 0;
+    renderQuiz();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// التشغيل المبدئي
+renderQuiz();
+</script>
+
 </body>
-
 </html>
